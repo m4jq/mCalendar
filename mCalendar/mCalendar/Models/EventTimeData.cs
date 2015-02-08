@@ -11,7 +11,6 @@ namespace mCalendar.Models
     {
         public int Id { get; set; }
 
-        [ForeignKey("Event")]
         public int EventId { get; set; }
 
         /*Possible keys:

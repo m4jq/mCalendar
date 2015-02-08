@@ -12,7 +12,6 @@ namespace mCalendar.Models
     {
         public int Id { get; set; }
 
-        [ForeignKey("Schedule")]
         public int ScheduleId { get; set; }
 
         [Required]
