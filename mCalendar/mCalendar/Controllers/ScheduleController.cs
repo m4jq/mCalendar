@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
@@ -8,18 +9,29 @@ using System.Net.Http;
 using System.Web.Http;
 using mCalendar.Filters;
 using mCalendar.Models;
+using mCalendar.Models.Repositories;
 
 namespace mCalendar.Controllers
 {
     [Authorize]
     public class ScheduleController : ApiController
     {
-        private ScheduleContext db = new ScheduleContext(); //needs to be replaced by repository for UT
+        private readonly IScheduleRepository _scheduleRepository;
+
+        public ScheduleController()
+        {
+            _scheduleRepository = new EFScheduleRepository();
+        }
+
+        public ScheduleController(IScheduleRepository scheduleRepository)
+        {
+            _scheduleRepository = scheduleRepository;
+        }
 
         // GET api/Schedule
         public IEnumerable<ScheduleDto> GetSchedules()
         {
-            return db.Schedules.Include("Events")
+            return _scheduleRepository.Schedules.Include("Events")
                 .Where(u => u.UserId == User.Identity.Name)
                 .OrderByDescending(u => u.Id)
                 .AsEnumerable()
@@ -29,7 +41,7 @@ namespace mCalendar.Controllers
         // GET api/Schedule/5
         public ScheduleDto GetSchedule(int id)
         {
-            Schedule schedule = db.Schedules.Find(id);
+            Schedule schedule = _scheduleRepository.GetById(id);
             if (schedule == null)
             {
                 throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
@@ -59,17 +71,15 @@ namespace mCalendar.Controllers
             }
 
             Schedule schedule = scheduleDto.ToEntity();
-            if (db.Entry(schedule).Entity.UserId != User.Identity.Name)
+            if (schedule.UserId != User.Identity.Name)
             {
                 // Trying to modify a record that does not belong to the user
                 return Request.CreateResponse(HttpStatusCode.Unauthorized);
             }
 
-            db.Entry(schedule).State = EntityState.Modified;
-
             try
             {
-                db.SaveChanges();
+                _scheduleRepository.Save(schedule);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -90,8 +100,8 @@ namespace mCalendar.Controllers
 
             scheduleDto.UserId = User.Identity.Name;
             Schedule schedule = scheduleDto.ToEntity();
-            db.Schedules.Add(schedule);
-            db.SaveChanges();
+            _scheduleRepository.Save(schedule);
+            
             scheduleDto.ScheduleId = schedule.Id;
 
             HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, scheduleDto);
@@ -103,24 +113,23 @@ namespace mCalendar.Controllers
         [ValidateHttpAntiForgeryToken]
         public HttpResponseMessage DeleteTodoList(int id)
         {
-            Schedule schedule = db.Schedules.Find(id);
+            Schedule schedule = _scheduleRepository.GetById(id);
             if (schedule == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
             }
 
-            if (db.Entry(schedule).Entity.UserId != User.Identity.Name)
+            if (schedule.UserId != User.Identity.Name)
             {
                 // Trying to delete a record that does not belong to the user
                 return Request.CreateResponse(HttpStatusCode.Unauthorized);
             }
 
             var scheduleDto = new ScheduleDto(schedule);
-            db.Schedules.Remove(schedule);
 
             try
             {
-                db.SaveChanges();
+                _scheduleRepository.Delete(schedule);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -132,7 +141,7 @@ namespace mCalendar.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
+            _scheduleRepository.Dispose();
             base.Dispose(disposing);
         }
     }

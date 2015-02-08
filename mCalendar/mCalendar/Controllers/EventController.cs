@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using mCalendar.Filters;
 using mCalendar.Models;
+using mCalendar.Models.Repositories;
 
 namespace mCalendar.Controllers
 {
@@ -13,7 +14,20 @@ namespace mCalendar.Controllers
     [ValidateHttpAntiForgeryToken]
     public class EventController : ApiController
     {
-        private ScheduleContext db = new ScheduleContext(); //needs to be replaced by repository for UT
+        private readonly IEventRepository _eventRepository;
+        private readonly IScheduleRepository _scheduleRepository;
+
+        public EventController()
+        {
+            _eventRepository = new EFEventRepository();
+            _scheduleRepository = new EFScheduleRepository();
+        }
+
+        public EventController(IEventRepository eventRepository, IScheduleRepository scheduleRepository)
+        {
+            _eventRepository = eventRepository;
+            _scheduleRepository = scheduleRepository;
+        }
 
         // PUT api/Event/5
         public HttpResponseMessage PutEvent(int id, EventDto eventDto)
@@ -29,7 +43,7 @@ namespace mCalendar.Controllers
             }
 
             Event ev = eventDto.ToEntity();
-            Schedule schedule = db.Schedules.Find(ev.ScheduleId);
+            Schedule schedule = _scheduleRepository.GetById(ev.ScheduleId);
             if (schedule == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
@@ -42,12 +56,11 @@ namespace mCalendar.Controllers
             }
 
             // Need to detach to avoid duplicate primary key exception when SaveChanges is called
-            db.Entry(schedule).State = EntityState.Detached;
-            db.Entry(ev).State = EntityState.Modified;
+            _scheduleRepository.Detach(schedule);
 
             try
             {
-                db.SaveChanges();
+                _eventRepository.Save(ev);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -65,7 +78,7 @@ namespace mCalendar.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
 
-            Schedule schedule = db.Schedules.Find(eventDto.ScheduleId);
+            Schedule schedule = _scheduleRepository.GetById(eventDto.ScheduleId);
             if (schedule == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
@@ -80,9 +93,9 @@ namespace mCalendar.Controllers
             Event ev = eventDto.ToEntity();
 
             // Need to detach to avoid loop reference exception during JSON serialization
-            db.Entry(schedule).State = EntityState.Detached;
-            db.Events.Add(ev);
-            db.SaveChanges();
+            _scheduleRepository.Detach(schedule);
+
+            _eventRepository.Save(ev);
             eventDto.EventId = ev.Id;
 
             HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, eventDto);
@@ -93,13 +106,13 @@ namespace mCalendar.Controllers
         // DELETE api/Event/5
         public HttpResponseMessage DeleteEvent(int id)
         {
-            Event ev = db.Events.Find(id);
+            Event ev = _eventRepository.GetById(id);
             if (ev == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
             }
 
-            Schedule schedule = db.Schedules.Find(ev.ScheduleId);
+            Schedule schedule = _scheduleRepository.GetById(ev.ScheduleId);
             if (schedule.UserId != User.Identity.Name)
             {
                 // Trying to delete a record that does not belong to the user
@@ -107,11 +120,10 @@ namespace mCalendar.Controllers
             }
 
             EventDto eventDto = new EventDto(ev);
-            db.Events.Remove(ev);
 
             try
             {
-                db.SaveChanges();
+                _eventRepository.Delete(ev);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -123,7 +135,8 @@ namespace mCalendar.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
+            _scheduleRepository.Dispose();
+            _eventRepository.Dispose();
             base.Dispose(disposing);
         }
     }

@@ -217,6 +217,14 @@
     <Compile Include="Models\Reminder.cs" />
     <Compile Include="Models\ReminderDto.cs" />
     <Compile Include="Models\ReminderType.cs" />
+    <Compile Include="Models\Repositories\EFEventRepository.cs" />
+    <Compile Include="Models\Repositories\EFEventTimeDateRepository.cs" />
+    <Compile Include="Models\Repositories\EFReminderRepository.cs" />
+    <Compile Include="Models\Repositories\EFScheduleRepository.cs" />
+    <Compile Include="Models\Repositories\IEventRepository.cs" />
+    <Compile Include="Models\Repositories\IEventTimeDataRepository.cs" />
+    <Compile Include="Models\Repositories\IReminderRepository.cs" />
+    <Compile Include="Models\Repositories\IScheduleRepository.cs" />
     <Compile Include="Models\Schedule.cs" />
     <Compile Include="Models\ScheduleContext.cs" />
     <Compile Include="Models\ScheduleDto.cs" />
