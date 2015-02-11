@@ -11,22 +11,24 @@ namespace mCalendar.Models
     {
         public int Id { get; set; }
 
+        [Required]
         public int EventId { get; set; }
 
-        /*Possible keys:
-         * start_date
-         * end_date
-         * timezone_id
-         * repeat_interval_* --interval id, for advanced intervals
-         * repeat_year_*
-         * repeat_month_*
-         * repeat_week_*
-         * repeat_weekday_* 
-         */
-        [Required]
-        public string Key { get; set; }
+        public DateTime StartDate { get; set; }
+
+        public DateTime EndDate { get; set; }
         
-        [Required]
-        public string Value { get; set; }
+        public int RepeatInterval { get; set; } //days
+
+        public int RepeatMonthOfYear { get; set; }
+
+        public int RepeatWeekOfMonth { get; set; }
+
+        public int RepeatDayOfWeek { get; set; }
+
+        public int RepeatMonth { get; set; }
+
+        public int RepeatDay { get; set; }
+        
     }
 }

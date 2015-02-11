@@ -18,11 +18,21 @@ namespace mCalendar.Models
         [Required]   
         public int EventId { get; set; }
 
-        [Required]
-        public string Key { get; set; }
+        public DateTime StartDate { get; set; }
 
-        [Required]
-        public string Value { get; set; }
+        public DateTime EndDate { get; set; }
+
+        public int RepeatInterval { get; set; } //days
+
+        public int RepeatMonthOfYear { get; set; }
+
+        public int RepeatWeekOfMonth { get; set; }
+
+        public int RepeatDayOfWeek { get; set; }
+
+        public int RepeatMonth { get; set; }
+
+        public int RepeatDay { get; set; }
 
         public EventTimeDataDto(){}
 
@@ -30,8 +40,14 @@ namespace mCalendar.Models
         {
             EventTimeDataId = eventTimeData.Id;
             EventId = eventTimeData.EventId;
-            Key = eventTimeData.Key;
-            Value = eventTimeData.Value;
+            StartDate = eventTimeData.StartDate;
+            EndDate = eventTimeData.EndDate;
+            RepeatInterval = eventTimeData.RepeatInterval;
+            RepeatMonthOfYear = eventTimeData.RepeatMonthOfYear;
+            RepeatWeekOfMonth = eventTimeData.RepeatWeekOfMonth;
+            RepeatDayOfWeek = eventTimeData.RepeatDayOfWeek;
+            RepeatMonth = eventTimeData.RepeatMonth;
+            RepeatDay = eventTimeData.RepeatDay;
         }
 
         public EventTimeData ToEntity()
@@ -40,9 +56,14 @@ namespace mCalendar.Models
             {
                 Id = EventTimeDataId,
                 EventId = EventId,
-                Key = Key,
-                Value = Value
-
+                StartDate = StartDate,
+                EndDate = EndDate,
+                RepeatInterval = RepeatInterval,
+                RepeatMonthOfYear = RepeatMonthOfYear,
+                RepeatWeekOfMonth = RepeatWeekOfMonth,
+                RepeatDayOfWeek = RepeatDayOfWeek,
+                RepeatMonth = RepeatMonth,
+                RepeatDay = RepeatDay
             };
 
             return eventTimeData;

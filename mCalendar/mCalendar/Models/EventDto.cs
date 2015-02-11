@@ -79,11 +79,6 @@ namespace mCalendar.Models
             return ev;
 
         }
-
-        public Dictionary<string, string> GetEventData()
-        {
-            return EventData.ToDictionary(eventData => eventData.Key, eventData => eventData.Value);
-        }
     }
 
 }

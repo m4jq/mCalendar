@@ -20,7 +20,7 @@ namespace mCalendar.Models
         public string Description { get; set; }
         
         public bool IsPrivate { get; set; }
-
+    
         public virtual ICollection<EventTimeData> EventData { get; set; }
 
         public virtual ICollection<Reminder> Reminders { get; set; }
