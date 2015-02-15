@@ -20,19 +20,17 @@ namespace mCalendar.Models
 
         public DateTime StartDate { get; set; }
 
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
-        public int RepeatInterval { get; set; } //days
+        public int? RepeatInterval { get; set; } //days
 
-        public int RepeatMonthOfYear { get; set; }
+        public int? RepeatWeekOfMonth { get; set; }
 
-        public int RepeatWeekOfMonth { get; set; }
+        public int? RepeatDayOfWeek { get; set; }
 
-        public int RepeatDayOfWeek { get; set; }
+        public int? RepeatMonth { get; set; }
 
-        public int RepeatMonth { get; set; }
-
-        public int RepeatDay { get; set; }
+        public int? RepeatDay { get; set; }
 
         public EventTimeDataDto(){}
 
@@ -43,7 +41,6 @@ namespace mCalendar.Models
             StartDate = eventTimeData.StartDate;
             EndDate = eventTimeData.EndDate;
             RepeatInterval = eventTimeData.RepeatInterval;
-            RepeatMonthOfYear = eventTimeData.RepeatMonthOfYear;
             RepeatWeekOfMonth = eventTimeData.RepeatWeekOfMonth;
             RepeatDayOfWeek = eventTimeData.RepeatDayOfWeek;
             RepeatMonth = eventTimeData.RepeatMonth;
@@ -59,7 +56,6 @@ namespace mCalendar.Models
                 StartDate = StartDate,
                 EndDate = EndDate,
                 RepeatInterval = RepeatInterval,
-                RepeatMonthOfYear = RepeatMonthOfYear,
                 RepeatWeekOfMonth = RepeatWeekOfMonth,
                 RepeatDayOfWeek = RepeatDayOfWeek,
                 RepeatMonth = RepeatMonth,

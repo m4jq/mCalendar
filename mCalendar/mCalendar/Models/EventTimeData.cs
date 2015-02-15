@@ -16,19 +16,17 @@ namespace mCalendar.Models
 
         public DateTime StartDate { get; set; }
 
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
         
-        public int RepeatInterval { get; set; } //days
+        public int? RepeatInterval { get; set; } //days
 
-        public int RepeatMonthOfYear { get; set; }
+        public int? RepeatWeekOfMonth { get; set; }
 
-        public int RepeatWeekOfMonth { get; set; }
+        public int? RepeatDayOfWeek { get; set; }
 
-        public int RepeatDayOfWeek { get; set; }
+        public int? RepeatMonth { get; set; }
 
-        public int RepeatMonth { get; set; }
-
-        public int RepeatDay { get; set; }
+        public int? RepeatDay { get; set; }
         
     }
 }
