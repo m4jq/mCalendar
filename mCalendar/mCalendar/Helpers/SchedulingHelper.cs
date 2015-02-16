@@ -9,12 +9,14 @@ namespace mCalendar.Helpers
     {
         public static EventDto CreateWeeklyEventDto(int numberOfWeeks, WeekDaysFlags weekDays, DateTime startDate, DateTime? endDate, int? repeatCount)
         {
+            if(numberOfWeeks < 1)
+                throw new InvalidOperationException("Invalid input. Number of weeks have to be greater or equal 1.");
             if(endDate.HasValue && repeatCount.HasValue)
                 throw new InvalidOperationException("Invalid input. EndDate and repeatCount have value.");
 
             var interval = numberOfWeeks*7;
 
-            var ev = new Event {EventData = new List<EventTimeData>()}; //fill data from event form - external
+            var ev = new Event {EventData = new List<EventTimeData>(), Reminders = new List<Reminder>()}; //fill data from event form - external
 
             var daysOfWeek = new List<int>();
             if (weekDays != 0)
@@ -31,7 +33,7 @@ namespace mCalendar.Helpers
                 var eventDays = GetRepetitions(daysOfWeek, repeatCount.Value, GetWeekDayNumber(startDate));
                 foreach (var eventDayOfWeek in eventDays.Where(e => e.Value > 0))
                 {
-                    DateTime startDateTime = GetStartDateTime(startDate, eventDayOfWeek.Key);
+                    DateTime startDateTime = GetStartDateTime(startDate, eventDayOfWeek.Key, interval);
                     DateTime endDateTime = GetEndDateTime(startDateTime, eventDayOfWeek.Value, interval);
                     
                     var eventTimeData = new EventTimeData
@@ -48,7 +50,7 @@ namespace mCalendar.Helpers
             {
                 foreach (var dayOfWeek in daysOfWeek)
                 {
-                    DateTime startDateTime = GetStartDateTime(startDate, dayOfWeek);
+                    DateTime startDateTime = GetStartDateTime(startDate, dayOfWeek, interval);
                     DateTime? endDateTime = null;
 
                     if (endDate.HasValue)
@@ -109,7 +111,7 @@ namespace mCalendar.Helpers
             return daysOfWeek;
         }
 
-        private static DateTime GetStartDateTime(DateTime actualDate, int dayOfWeek)
+        private static DateTime GetStartDateTime(DateTime actualDate, int dayOfWeek, int interval)
         {
             DateTime startDateTime;
             int actualDayOfWeek = GetWeekDayNumber(actualDate);
@@ -120,7 +122,7 @@ namespace mCalendar.Helpers
             }
             else if (actualDayOfWeek > dayOfWeek)
             {
-                startDateTime = actualDate.AddDays(7 - Math.Abs(actualDayOfWeek - dayOfWeek));
+                startDateTime = actualDate.AddDays(dayOfWeek - actualDayOfWeek + interval);
             }
             else
             {

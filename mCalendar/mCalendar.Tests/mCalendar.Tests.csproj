@@ -106,6 +106,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScheduleControllerTest.cs" />
+    <Compile Include="SchedulingHelperTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.config" />
