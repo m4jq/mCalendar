@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
-using System.Web.UI.WebControls;
+using mCalendar.DomainModels.Reminders;
 
 namespace mCalendar.Models
 {
@@ -15,14 +11,9 @@ namespace mCalendar.Models
         public int EventId { get; set; }
 
         [Required]
-        public int MinutesBefore { get; set; }
+        public TimeSpan TimeBefore { get; set; }
         
         [Required]
         public ReminderType ReminderType { get; set; }
-        
-        [Required]
-        public string Title { get; set; }
-        
-        public string Content { get; set; }
     }
 }

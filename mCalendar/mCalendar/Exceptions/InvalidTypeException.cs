@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace mCalendar.Models
+namespace mCalendar.Exceptions
 {
-    public enum ReminderType
+    public class InvalidTypeException : Exception
     {
-        Email
     }
 }
