@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using mCalendar.DomainModels.Interfaces;
 using mCalendar.DomainModels.ReminderData;
 using mCalendar.DomainModels.SchedulerData;
@@ -61,12 +60,12 @@ namespace mCalendar.DomainModels.Schedulers
             }
             else
             {
-                daysOfWeek.Add(GetWeekDayNumber(startDate));
+                daysOfWeek.Add(startDate.GetWeekDayNumber());
             }
 
             if (repeatCount.HasValue)
             {
-                var eventDays = GetRepetitions(daysOfWeek, repeatCount.Value, GetWeekDayNumber(startDate));
+                var eventDays = GetRepetitions(daysOfWeek, repeatCount.Value, startDate.GetWeekDayNumber());
                 foreach (var eventDayOfWeek in eventDays.Where(e => e.Value > 0))
                 {
                     DateTime startDateTime = GetStartDateTime(startDate, eventDayOfWeek.Key, interval);
@@ -110,11 +109,6 @@ namespace mCalendar.DomainModels.Schedulers
             return result;
         }
 
-        private static int GetWeekDayNumber(DateTime dateTime)
-        {
-            return (int)(dateTime.DayOfWeek + 6) % 7 + 1; //Monday = 1
-        }
-
         private static List<int> ConvertToDaysOfWeekNumbers(IEnumerable<Enum> enumDaysOfWeek)
         {
             var daysOfWeek = new List<int>();
@@ -150,7 +144,7 @@ namespace mCalendar.DomainModels.Schedulers
         private static DateTime GetStartDateTime(DateTime actualDate, int dayOfWeek, int interval)
         {
             DateTime startDateTime;
-            int actualDayOfWeek = GetWeekDayNumber(actualDate);
+            int actualDayOfWeek = actualDate.GetWeekDayNumber();
 
             if (actualDayOfWeek == dayOfWeek)
             {

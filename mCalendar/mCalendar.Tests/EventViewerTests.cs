@@ -1,26 +1,140 @@
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using mCalendar.DomainModels;
 using mCalendar.Models;
+using mCalendar.Models.Repositories;
+using Moq;
+using NUnit.Framework;
 
-namespace mCalendar.Migrations
+namespace mCalendar.Tests
 {
-    using System;
-    using System.Data.Entity.Migrations;
-
-    internal sealed class Configuration : DbMigrationsConfiguration<ScheduleContext>
+    [TestFixture]
+    public class EventViewerTests
     {
-        public Configuration()
+        private Mock<IEventRepository> _eventsRepositoryMock;
+
+        [SetUp]
+        public void SetUp()
         {
-            AutomaticMigrationsEnabled = true;
+            _eventsRepositoryMock = new Mock<IEventRepository>();
+            _eventsRepositoryMock.Setup(x => x.Events).Returns(GetAllEvents());
         }
 
-        protected override void Seed(ScheduleContext context)
+        [Test]
+        public void GetEvents_OneDayView_Success()
         {
-            context.Schedules.AddOrUpdate(
-                new Schedule
+            //Arrange
+            var date = new DateTime(2015, 2, 10);
+            var eventViewer = new EventViewer(_eventsRepositoryMock.Object);
+
+            //Act
+            Dictionary<DateTime, List<EventDto>> result = eventViewer.GetEvents(date, date);
+
+            //Assert
+            Assert.IsNotEmpty(result);
+            Assert.AreEqual(7, result[date].Count);
+            Assert.False(result[date].Any(e => e.Title == "Complex event 1"));
+            Assert.False(result[date].Any(e => e.Title == "Complex event 2"));
+        }
+
+
+        [Test]
+        public void GetEvents_4DayView_Success()
+        {
+            //Arrange
+            var startDate = new DateTime(2015, 2, 10);
+            var endDate = new DateTime(2015, 2, 13); 
+            var eventViewer = new EventViewer(_eventsRepositoryMock.Object);
+
+            //Act
+            Dictionary<DateTime, List<EventDto>> result = eventViewer.GetEvents(startDate, endDate);
+
+            //Assert
+            Assert.IsNotEmpty(result);
+            Assert.AreEqual(7, result[startDate].Count);
+            Assert.False(result[startDate].Any(e => e.Title == "Complex event 1"));
+            Assert.False(result[startDate].Any(e => e.Title == "Complex event 2"));
+
+            for (int i = 1; i < 4; i++)
+            {
+                Assert.AreEqual(1, result[startDate.AddDays(i)].Count);
+                Assert.True(result[startDate.AddDays(i)].Any(e => e.Title == "Daily event"));
+            }
+        }
+
+        [Test]
+        public void GetEvents_WeekView_Success()
+        {
+            //Arrange
+            var startDate = new DateTime(2015, 2, 9);
+            var endDate = new DateTime(2015, 2, 15);
+            var eventViewer = new EventViewer(_eventsRepositoryMock.Object);
+
+            //Act
+            Dictionary<DateTime, List<EventDto>> result = eventViewer.GetEvents(startDate, endDate);
+
+            //Assert
+            Assert.IsNotEmpty(result);
+
+            Assert.IsEmpty(result[startDate]);
+
+            Assert.AreEqual(7, result[startDate.AddDays(1)].Count);
+            Assert.False(result[startDate.AddDays(1)].Any(e => e.Title == "Complex event 1"));
+            Assert.False(result[startDate.AddDays(1)].Any(e => e.Title == "Complex event 2"));
+
+            for (int i = 2; i < 7; i++)
+            {
+                Assert.AreEqual(1, result[startDate.AddDays(i)].Count);
+                Assert.True(result[startDate.AddDays(i)].Any(e => e.Title == "Daily event"));
+            }
+        }
+
+        [Test]
+        public void GetEvents_MonthView_Success()
+        {
+            //Arrange
+            var startDate = new DateTime(2015, 2, 1);
+            var endDate = new DateTime(2015, 2, 28);
+            var eventViewer = new EventViewer(_eventsRepositoryMock.Object);
+
+            //Act
+            Dictionary<DateTime, List<EventDto>> result = eventViewer.GetEvents(startDate, endDate);
+
+            //Assert
+            Assert.IsNotEmpty(result);
+
+            for (int i = 0; i < 9; i++)
+            {
+                Assert.IsEmpty(result[startDate.AddDays(i)]);
+            }
+
+            Assert.AreEqual(7, result[startDate.AddDays(9)].Count);
+            Assert.False(result[startDate.AddDays(9)].Any(e => e.Title == "Complex event 1"));
+            Assert.False(result[startDate.AddDays(9)].Any(e => e.Title == "Complex event 2"));
+
+            for (int i = 10; i < 28; i++)
+            {
+                if (i == 16 || i == 23)
                 {
-                    Events = new List<Event>
-                    {
-                        new Event
+                    Assert.AreEqual(2, result[startDate.AddDays(i)].Count);
+                    Assert.True(result[startDate.AddDays(i)].Any(e => e.Title == "Daily event"));
+                    Assert.True(result[startDate.AddDays(i)].Any(e => e.Title == "Weekly event"));
+                }
+                else
+                {
+                    Assert.AreEqual(1, result[startDate.AddDays(i)].Count);
+                    Assert.True(result[startDate.AddDays(i)].Any(e => e.Title == "Daily event"));
+                }
+
+            }
+        }
+
+        private IQueryable<Event> GetAllEvents()
+        {
+            return new List<Event>
+            {
+                new Event
                         {
                             Description = "One-time event: With no length",
                             Title = "With no length",
@@ -197,13 +311,8 @@ namespace mCalendar.Migrations
                                 }
                             }
                         }
-                    },
-                    Title = "Work activities schedule",
-                    UserId = "John Doe"
-                }
-
                 
-                );
+            }.AsQueryable();
         }
     }
 }

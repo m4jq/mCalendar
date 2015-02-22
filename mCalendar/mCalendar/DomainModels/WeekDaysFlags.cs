@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
-namespace mCalendar.Helpers
+namespace mCalendar.DomainModels
 {
     [Flags]
     public enum WeekDaysFlags

@@ -203,8 +203,15 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\EventController.cs" />
     <Compile Include="Controllers\ScheduleController.cs" />
+    <Compile Include="DomainModels\Converters\EventTimeDataToOccourenceConverter.cs" />
+    <Compile Include="DomainModels\BaseClasses\EventTimeDataBase.cs" />
     <Compile Include="DomainModels\EventVisibilityType.cs" />
     <Compile Include="DomainModels\Factories\ConcreteFactory.cs" />
+    <Compile Include="DomainModels\Occourences\Occourence.cs" />
+    <Compile Include="DomainModels\Occourences\OneTimeOccourence.cs" />
+    <Compile Include="DomainModels\Occourences\SerieComplexDateOccourence.cs" />
+    <Compile Include="DomainModels\Occourences\SerieComplexDayOccourence.cs" />
+    <Compile Include="DomainModels\Occourences\SerieSimpleOccourence.cs" />
     <Compile Include="DomainModels\ReminderData\EventReminderData.cs" />
     <Compile Include="DomainModels\Reminders\EmailReminder.cs" />
     <Compile Include="DomainModels\EventViewType.cs" />
@@ -231,8 +238,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\SchedulingHelper.cs" />
-    <Compile Include="Helpers\WeekDaysFlags.cs" />
+    <Compile Include="DomainModels\WeekDaysFlags.cs" />
+    <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\Event.cs" />

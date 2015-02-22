@@ -9,6 +9,6 @@ namespace mCalendar.DomainModels.Interfaces
 {
     interface IEventViewer
     {
-        List<EventDto> GetEvents(DateTime startDate, DateTime endDate);
+        Dictionary<DateTime, List<EventDto>> GetEvents(DateTime startDate, DateTime endDate);
     }
 }

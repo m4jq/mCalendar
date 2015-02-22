@@ -22,6 +22,8 @@ namespace mCalendar.Models
 
         public string Description { get; set; }
 
+        public TimeSpan Duration { get; set; }
+
         public bool IsPrivate { get; set; }
 
         public List<EventTimeDataDto> EventData { get; set; }
@@ -36,6 +38,7 @@ namespace mCalendar.Models
             ScheduleId = ev.ScheduleId;
             Title = ev.Title;
             Description = ev.Description;
+            Duration = ev.Duration;
             IsPrivate = ev.IsPrivate;
 
             EventData = new List<EventTimeDataDto>();
@@ -61,6 +64,7 @@ namespace mCalendar.Models
                 ScheduleId = ScheduleId,
                 Title = Title,
                 Description = Description,
+                Duration = Duration,
                 IsPrivate = IsPrivate,
                 EventData = new List<EventTimeData>(),
                 Reminders = new List<Reminder>()

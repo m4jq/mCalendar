@@ -1,6 +1,4 @@
-﻿using mCalendar.Helpers;
-
-namespace mCalendar.DomainModels.SchedulerData
+﻿namespace mCalendar.DomainModels.SchedulerData
 {
     public class WeeklySchedulerEventData : SimpleRecouringEventData
     {

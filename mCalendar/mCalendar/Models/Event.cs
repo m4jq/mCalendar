@@ -18,7 +18,9 @@ namespace mCalendar.Models
         public string Title { get; set; }
         
         public string Description { get; set; }
-        
+
+        public TimeSpan Duration { get; set; }
+
         public bool IsPrivate { get; set; }
     
         public virtual ICollection<EventTimeData> EventData { get; set; }

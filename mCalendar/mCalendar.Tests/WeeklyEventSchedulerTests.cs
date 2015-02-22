@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using mCalendar.DomainModels;
 using mCalendar.DomainModels.Factories;
 using mCalendar.DomainModels.Interfaces;
 using mCalendar.DomainModels.SchedulerData;
-using mCalendar.DomainModels.Schedulers;
-using mCalendar.Helpers;
 using mCalendar.Models;
 using mCalendar.Models.Repositories;
 using Moq;
